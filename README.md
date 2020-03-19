@@ -3,8 +3,24 @@
 ## Installation
 `go get github.com/ngrash/trk`
 
+## Example
+```
+$ trk -this-week ~/companytime
+Date       From  To    Dur.   Day    Week   Total
+Tue 17.03. 10:30-12:30  2h00m  2h00m  2h00m -21h30m
+Tue 17.03. 13:00-16:30  3h30m  5h30m  5h30m -18h00m
+Tue 17.03. 17:00-18:00  1h00m  6h30m  6h30m -17h00m
+Wed 18.03. 08:00-09:00  1h00m  1h00m  7h30m -16h00m
+Wed 18.03. 10:00-12:45  2h45m  3h45m 10h15m -13h15m
+Wed 18.03. 13:50-15:00  1h10m  4h55m 11h25m -12h05m
+Wed 18.03. 16:00-17:15  1h15m  6h10m 12h40m -10h50m
+Thu 19.03. 13:20-15:00  1h40m  1h40m 14h20m  -9h10m
+Thu 19.03. 15:34-18:30  2h56m  4h36m 17h16m  -6h14m
+```
+
 ## Usage
 ```
+$ trk -help
 Usage of [trk] [options] <filename>
 
 Options:
