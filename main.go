@@ -38,8 +38,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	// get local location
+	location := time.Now().Location()
+
 	filename := flag.Arg(0)
-	entries, err := readFile(filename)
+	entries, err := readFile(filename, location)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,7 +82,9 @@ func main() {
 
 		// assume last entry without duration ends now, if it is from today
 		if lastEntry := i == len(entries)-1; lastEntry && e.to == nil && today(e.date) {
-			d := time.Since(*e.from).Truncate(time.Minute)
+			t := time.Now().Truncate(time.Minute)
+			e.to = &t
+			d := e.to.Sub(*e.from)
 			e.duration = &d
 		}
 

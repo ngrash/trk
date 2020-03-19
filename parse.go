@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func readFile(filename string) ([]*entry, error) {
+func readFile(filename string, location *time.Location) ([]*entry, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -21,7 +21,7 @@ func readFile(filename string) ([]*entry, error) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		e, err := parseEntry(line)
+		e, err := parseEntry(line, location)
 		if err != nil {
 			log.Printf("Failed to parse entry: %v, err: %v", line, err)
 			continue
@@ -41,7 +41,7 @@ func readFile(filename string) ([]*entry, error) {
 	return entries, nil
 }
 
-func parseEntry(line string) (*entry, error) {
+func parseEntry(line string, location *time.Location) (*entry, error) {
 	// remove comments (starting with #)
 	if i := strings.Index(line, "#"); i > -1 {
 		line = line[:i]
@@ -55,7 +55,7 @@ func parseEntry(line string) (*entry, error) {
 	dateStr := components[0]
 	durationStr := components[1]
 
-	date, err := time.Parse(*dateInLayout, dateStr)
+	date, err := time.ParseInLocation(*dateInLayout, dateStr, location)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func parseEntry(line string) (*entry, error) {
 		fromStr := timeComponents[0]
 		toStr := timeComponents[1]
 
-		from, to, err = maybeParseSpecifiedDuration(dateStr, fromStr, toStr)
+		from, to, err = maybeParseSpecifiedDuration(dateStr, fromStr, toStr, location)
 		if err != nil {
 			return nil, err
 		}
@@ -91,13 +91,13 @@ func parseEntry(line string) (*entry, error) {
 	return &entry{date, from, to, duration}, nil
 }
 
-func maybeParseSpecifiedDuration(dateStr, fromStr, toStr string) (from, to *time.Time, err error) {
+func maybeParseSpecifiedDuration(dateStr, fromStr, toStr string, location *time.Location) (from, to *time.Time, err error) {
 	if fromStr == "" {
 		err = errors.New("missing `from` date")
 		return
 	}
 
-	from, err = parseWithDate(dateStr, fromStr)
+	from, err = parseWithDate(dateStr, fromStr, location)
 	if err != nil {
 		return
 	}
@@ -106,14 +106,14 @@ func maybeParseSpecifiedDuration(dateStr, fromStr, toStr string) (from, to *time
 		return
 	}
 
-	to, err = parseWithDate(dateStr, toStr)
+	to, err = parseWithDate(dateStr, toStr, location)
 	return
 }
 
-func parseWithDate(dateStr, timeStr string) (*time.Time, error) {
+func parseWithDate(dateStr, timeStr string, location *time.Location) (*time.Time, error) {
 	layout := *dateInLayout + "/" + *timeInLayout
 	str := dateStr + "/" + timeStr
-	t, err := time.Parse(layout, str)
+	t, err := time.ParseInLocation(layout, str, location)
 	if err != nil {
 		return nil, err
 	} else {
