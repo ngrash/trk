@@ -47,11 +47,12 @@ func main() {
 		return entries[i].date.Before(entries[j].date) && entries[i].from.Before(*entries[j].from)
 	})
 
-	year, week := 0, 0
+	year, week, day := 0, 0, 0
 	weekTotal := time.Duration(0)
+	dayTotal := time.Duration(0)
 	carry := time.Duration(0)
 
-	fmt.Println("Date       From  To    Time   Week   Total")
+	fmt.Println("Date       From  To    Time   Day    Week   Total")
 
 	for i, e := range entries {
 		y, w := e.date.ISOWeek()
@@ -59,6 +60,15 @@ func main() {
 			year, week = y, w
 			weekTotal = time.Duration(0)
 			carry -= *weekly
+		}
+
+		if d := e.date.YearDay(); d != day || y != year {
+			// edge case: if you only logged once a year but at the
+			// same day, we would not know it were different days
+			// if we did not check the year.
+			year = y
+			day = d
+			dayTotal = time.Duration(0)
 		}
 
 		// assume last entry without duration ends now, if it is from today
@@ -69,6 +79,7 @@ func main() {
 
 		if e.duration != nil {
 			weekTotal += *e.duration
+			dayTotal += *e.duration
 		} else {
 			fmt.Printf("Missing duration on %v\n", e.date)
 			continue
@@ -76,11 +87,12 @@ func main() {
 
 		carry += *e.duration
 		date := e.date.Format(dateOutLayout)
-		fmt.Printf("%v %v-%v %v %v %v\n",
+		fmt.Printf("%v %v-%v %v %v %v %v\n",
 			date,
 			e.from.Format(timeOutLayout),
 			e.to.Format(timeOutLayout),
 			d2s(*e.duration, false),
+			d2s(dayTotal, false),
 			d2s(weekTotal, false),
 			d2s(carry, true))
 	}
