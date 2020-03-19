@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"sort"
 	"time"
@@ -70,7 +71,24 @@ func main() {
 
 		carry += *e.duration
 		date := e.date.Format(*dateOutLayout)
-		fmt.Printf("%v\t%v\t%v\t%v\n", date, e.duration, weekTotal, carry)
+		fmt.Printf("%v %v-%v %v %v %v\n",
+			date,
+			e.from.Format(*timeOutLayout),
+			e.to.Format(*timeOutLayout),
+			d2s(*e.duration, false),
+			d2s(weekTotal, false),
+			d2s(carry, true))
+	}
+}
+
+func d2s(d time.Duration, negPossible bool) string {
+	n := int64(d) / int64(time.Minute)
+	min := int64(math.Abs(float64(n % 60)))
+	hours := int64(n / 60)
+	if negPossible {
+		return fmt.Sprintf("%3vh%02dm", hours, min)
+	} else {
+		return fmt.Sprintf("%2vh%02dm", hours, min)
 	}
 }
 
