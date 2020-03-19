@@ -15,6 +15,7 @@ var (
 	dateInLayout = flag.String("date-layout", "06-1-2", "Layout of date input")
 	timeInLayout = flag.String("time-layout", "1504", "Layout of time input")
 	quiet        = flag.Bool("quiet", false, "Do not print column names")
+	thisWeek     = flag.Bool("this-week", false, "Print only items from the current week")
 )
 
 const (
@@ -53,6 +54,8 @@ func main() {
 	dayTotal := time.Duration(0)
 	carry := time.Duration(0)
 
+	currentYear, currentWeek := time.Now().ISOWeek()
+
 	if !*quiet {
 		fmt.Println("Date       From  To    Time   Day    Week   Total")
 	}
@@ -89,6 +92,11 @@ func main() {
 		}
 
 		carry += *e.duration
+
+		if *thisWeek && (y != currentYear || w != currentWeek) {
+			continue
+		}
+
 		date := e.date.Format(dateOutLayout)
 		fmt.Printf("%v %v-%v %v %v %v %v\n",
 			date,
