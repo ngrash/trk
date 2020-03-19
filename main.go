@@ -57,7 +57,7 @@ func main() {
 	currentYear, currentWeek := time.Now().ISOWeek()
 
 	if !*quiet {
-		fmt.Println("Date       From  To    Time   Day    Week   Total")
+		fmt.Println("Date       From  To    Dur.   Day    Week   Total")
 	}
 
 	for i, e := range entries {
