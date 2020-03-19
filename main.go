@@ -12,8 +12,8 @@ import (
 
 var (
 	weekly       = flag.Duration("weekly", 24*time.Hour, "Weekly working time")
-	dateInLayout = flag.String("date-in", "06-1-2", "Layout of date input")
-	timeInLayout = flag.String("time-in", "1504", "Layout of time input")
+	dateInLayout = flag.String("date-layout", "06-1-2", "Layout of date input")
+	timeInLayout = flag.String("time-layout", "1504", "Layout of time input")
 )
 
 const (
