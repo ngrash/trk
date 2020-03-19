@@ -14,6 +14,7 @@ var (
 	weekly       = flag.Duration("weekly", 24*time.Hour, "Weekly working time")
 	dateInLayout = flag.String("date-layout", "06-1-2", "Layout of date input")
 	timeInLayout = flag.String("time-layout", "1504", "Layout of time input")
+	quiet        = flag.Bool("quiet", false, "Do not print column names")
 )
 
 const (
@@ -52,7 +53,9 @@ func main() {
 	dayTotal := time.Duration(0)
 	carry := time.Duration(0)
 
-	fmt.Println("Date       From  To    Time   Day    Week   Total")
+	if !*quiet {
+		fmt.Println("Date       From  To    Time   Day    Week   Total")
+	}
 
 	for i, e := range entries {
 		y, w := e.date.ISOWeek()
