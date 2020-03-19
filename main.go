@@ -11,11 +11,14 @@ import (
 )
 
 var (
-	weekly        = flag.Duration("weekly", 24*time.Hour, "Weekly working time")
-	dateInLayout  = flag.String("date-in", "06-1-2", "Layout of date input")
-	timeInLayout  = flag.String("time-in", "1504", "Layout of time input")
-	dateOutLayout = flag.String("date-out", "Mon 02.01.", "Layout of date output")
-	timeOutLayout = flag.String("time-out", "15:04", "Layout of time output")
+	weekly       = flag.Duration("weekly", 24*time.Hour, "Weekly working time")
+	dateInLayout = flag.String("date-in", "06-1-2", "Layout of date input")
+	timeInLayout = flag.String("time-in", "1504", "Layout of time input")
+)
+
+const (
+	dateOutLayout = "Mon 02.01."
+	timeOutLayout = "15:04"
 )
 
 type entry struct {
@@ -48,6 +51,8 @@ func main() {
 	weekTotal := time.Duration(0)
 	carry := time.Duration(0)
 
+	fmt.Println("Date       From  To    Time   Week   Total")
+
 	for i, e := range entries {
 		y, w := e.date.ISOWeek()
 		if year != y || week != w {
@@ -70,11 +75,11 @@ func main() {
 		}
 
 		carry += *e.duration
-		date := e.date.Format(*dateOutLayout)
+		date := e.date.Format(dateOutLayout)
 		fmt.Printf("%v %v-%v %v %v %v\n",
 			date,
-			e.from.Format(*timeOutLayout),
-			e.to.Format(*timeOutLayout),
+			e.from.Format(timeOutLayout),
+			e.to.Format(timeOutLayout),
 			d2s(*e.duration, false),
 			d2s(weekTotal, false),
 			d2s(carry, true))
