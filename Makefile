@@ -1,6 +1,6 @@
 .PHONY: test clean
 
-trk: main.go
+trk: *.go
 	go build
 
 test:
