@@ -40,7 +40,7 @@ func main() {
 
 	// sort by date
 	sort.Slice(entries, func(i, j int) bool {
-		return entries[i].date.Before(entries[j].date)
+		return entries[i].date.Before(entries[j].date) && entries[i].from.Before(*entries[j].from)
 	})
 
 	year, week := 0, 0
